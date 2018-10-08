@@ -80,6 +80,11 @@ variable "ssh_key_name" {
   description = "Amazon AWS Key Pair Name"
 }
 
+variable "availability_zone" {
+  default = "us-east-1a"
+  description = "AZ"
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"] # Canonical
@@ -95,8 +100,40 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+resource "aws_vpc" "OpenTicateVpc" {
+    cidr_block = "172.31.0.0/16"
+    tags {
+      Name = "OpenTicateMain"
+    }
+    enable_dns_support = "true"
+    enable_dns_hostnames = true
+}
+
+resource "aws_internet_gateway" "default" {
+   vpc_id = "${aws_vpc.OpenTicateVpc.id}"
+}
+
+# Internet acces not necessary for now
+resource "aws_route" "internet_access"{
+  route_table_id          = "${aws_vpc.OpenTicateVpc.main_route_table_id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id              = "${aws_internet_gateway.default.id}"
+}
+
+resource "aws_subnet" "sub_1" {
+  vpc_id = "${aws_vpc.OpenTicateVpc.id}"
+  availability_zone = "${var.availability_zone}"
+  cidr_block = "172.31.1.0/24"
+  map_public_ip_on_launch = "true"
+  tags {
+   Name = "sub_1"
+  }
+
+}
+
 resource "aws_security_group" "rancher_sg_allowall" {
   name = "${var.prefix}-allowall"
+  vpc_id = "${aws_vpc.OpenTicateVpc.id}"
 
   ingress {
     from_port   = "0"
@@ -129,8 +166,9 @@ resource "aws_instance" "rancherserver" {
   ami             = "${data.aws_ami.ubuntu.id}"
   instance_type   = "${var.type}"
   key_name        = "${var.ssh_key_name}"
-  security_groups = ["${aws_security_group.rancher_sg_allowall.name}"]
   user_data       = "${data.template_cloudinit_config.rancherserver-cloudinit.rendered}"
+  subnet_id       = "${aws_subnet.sub_1.id}"  
+  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
 
   tags {
     Name = "${var.prefix}-rancherserver"
@@ -156,8 +194,10 @@ resource "aws_instance" "rancheragent-all" {
   ami             = "${data.aws_ami.ubuntu.id}"
   instance_type   = "${var.type}"
   key_name        = "${var.ssh_key_name}"
-  security_groups = ["${aws_security_group.rancher_sg_allowall.name}"]
   user_data       = "${data.template_cloudinit_config.rancheragent-all-cloudinit.*.rendered[count.index]}"
+  subnet_id       = "${aws_subnet.sub_1.id}"  
+  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
+
 
   tags {
     Name = "${var.prefix}-rancheragent-${count.index}-all"
@@ -183,8 +223,9 @@ resource "aws_instance" "rancheragent-etcd" {
   ami             = "${data.aws_ami.ubuntu.id}"
   instance_type   = "${var.type}"
   key_name        = "${var.ssh_key_name}"
-  security_groups = ["${aws_security_group.rancher_sg_allowall.name}"]
   user_data       = "${data.template_cloudinit_config.rancheragent-etcd-cloudinit.*.rendered[count.index]}"
+  subnet_id       = "${aws_subnet.sub_1.id}"  
+  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
 
   tags {
     Name = "${var.prefix}-rancheragent-${count.index}-etcd"
@@ -210,8 +251,9 @@ resource "aws_instance" "rancheragent-controlplane" {
   ami             = "${data.aws_ami.ubuntu.id}"
   instance_type   = "${var.type}"
   key_name        = "${var.ssh_key_name}"
-  security_groups = ["${aws_security_group.rancher_sg_allowall.name}"]
   user_data     = "${data.template_cloudinit_config.rancheragent-controlplane-cloudinit.*.rendered[count.index]}"
+  subnet_id       = "${aws_subnet.sub_1.id}"  
+  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
 
   tags {
     Name = "${var.prefix}-rancheragent-${count.index}-controlplane"
@@ -237,8 +279,9 @@ resource "aws_instance" "rancheragent-worker" {
   ami             = "${data.aws_ami.ubuntu.id}"
   instance_type   = "${var.type}"
   key_name        = "${var.ssh_key_name}"
-  security_groups = ["${aws_security_group.rancher_sg_allowall.name}"]
   user_data       = "${data.template_cloudinit_config.rancheragent-worker-cloudinit.*.rendered[count.index]}"
+  subnet_id       = "${aws_subnet.sub_1.id}"  
+  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
 
   tags {
     Name = "${var.prefix}-rancheragent-${count.index}-worker"
