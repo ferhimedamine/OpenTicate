@@ -51,7 +51,7 @@ variable "admin_password" {
 }
 
 variable "cluster_name" {
-  default     = "quickstart"
+  default     = "cluster1"
   description = "Kubernetes Cluster Name"
 }
 
