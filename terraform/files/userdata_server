@@ -63,8 +63,8 @@ CLUSTERID=`echo $CLUSTERRESPONSE | docker run --rm -i $jqimage -r .id`
 KUBECONFIG=$(docker run --rm --net=host $curlimage -s 'https://127.0.0.1/v3/clusters/'"$CLUSTERID"'?action=generateKubeconfig' -H 'content-type: application/json' -H 'Accept: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{}' --insecure)
 
 mkdir /home/ubuntu/.kube/
-echo "$KUBECONFIG"  > /home/ubuntu/.kube/config
-cat /home/ubuntu/.kube/config | jq -r .config > /home/ubuntu/.kube/config
+KUBECONF=`echo $KUBECONFIG | docker run --rm -i $jqimage -r .config`
+echo "$KUBECONF"  > /home/ubuntu/.kube/config
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 chown ubuntu /home/ubuntu/.kube/
