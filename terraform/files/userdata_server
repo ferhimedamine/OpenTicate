@@ -59,5 +59,14 @@ CLUSTERRESPONSE=$(docker run --rm --net=host $curlimage -s 'https://127.0.0.1/v3
 # Extract clusterid to use for generating the docker run command
 CLUSTERID=`echo $CLUSTERRESPONSE | docker run --rm -i $jqimage -r .id`
 
+# Create kubectl config
+KUBECONFIG=$(docker run --rm --net=host $curlimage -s 'https://127.0.0.1/v3/clusters/'$CLUSTERID'?action=generateKubeconfig' -H 'content-type: application/json' -H 'Accept: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{}' --insecure)
+
+mkdir ~/.kube/
+echo "$KUBECONFIG" ~/.kube/config
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
+
 # Generate registrationtoken
 docker run --rm --net=host $curlimage -s 'https://127.0.0.1/v3/clusterregistrationtoken' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{"type":"clusterRegistrationToken","clusterId":"'$CLUSTERID'"}' --insecure
