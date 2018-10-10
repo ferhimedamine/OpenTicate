@@ -1,0 +1,24 @@
+
+#Create cluster following terraform.tfvars file
+# terraform apply -state-out terraform/*.tfstate 
+create-cluster
+
+
+############ Run a terraform commands with parameters of file  ############
+# terraform -auto-approve  -state terraform/*.tfstate   -var-file terraform/{PROVIDER}/temporary_Config_File_Created_With_Information_In_The_node_ConfigFile.tfvars -target terraform/PROVIDER/main.tf
+
+add-node nodeConfigFile.yaml
+add-etcd-node nodeConfigFile.yaml
+add-control-plane-node nodeConfigFile.yaml
+add-worker-node nodeConfigFile.yaml
+###################
+
+
+
+
+
+
+
+
+
+
