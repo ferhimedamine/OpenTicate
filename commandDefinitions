@@ -1,11 +1,20 @@
 
-#Create cluster following terraform.tfvars file
-# terraform apply -state-out terraform/*.tfstate 
+############ Create cluster following terraform.tfvars file ############
+1) terraform apply -state-out terraform/*.tfstate 
+2) Create Kafa Namespace ?
 create-cluster
 
 
-############ Run a terraform commands with parameters of file  ############
-# terraform -auto-approve  -state terraform/*.tfstate   -var-file terraform/{PROVIDER}/temporary_Config_File_Created_With_Information_In_The_node_ConfigFile.tfvars -target terraform/PROVIDER/main.tf
+############ Add nodes to cluster ############
+1) terraform -auto-approve  -state terraform/*.tfstate   -var-file terraform/{PROVIDER}/temporary_Config_File_Created_With_Information_In_The_node_ConfigFile.tfvars -target terraform/PROVIDER/main.tf
+2) add kubedns to each docker node so that the peer hostname (who will create chaincode; which will need to be able th find dns name of the peer: example "peer0" which is a service created at the same time as the peer) is visible from each container of the org namespace:
+/etc/default/docker 
+DOCKER_OPTS="--dns=kubeDNSPodIp --dns=192.168.0.1 --dns-search \
+default.svc.cluster.local --dns-search \
+svc.cluster.local --dns-opt ndots:2 --dns-opt \
+timeout:2 --dns-opt attempts:2 "
+
+
 
 add-node nodeConfigFile.yaml
 add-etcd-node nodeConfigFile.yaml
@@ -14,11 +23,22 @@ add-worker-node nodeConfigFile.yaml
 ###################
 
 
+############ add Organisation ############
+1) kubectl create namespace
+2) create lot of configmaps (adminMSP, CA, TLSCA, MSPofEachPeer)
+
+add-org orgConfigFile.yaml
 
 
 
+############ add Peer Pod to ORG ############
+1) Create service for the Peer POD?
 
 
+############ add CA Server Pod to ORG ############
 
 
+############ add CLI Pod to ORG ############
 
+
+############ add orderer org ############
