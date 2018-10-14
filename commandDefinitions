@@ -1,8 +1,13 @@
 
 ############ Create cluster following terraform.tfvars file ############
-1) terraform apply -state-out terraform/*.tfstate 
+0) terraform init aws/
+1) terraform apply -var-file terraform/PROVIDER/.tfvars -state-out terraform/terraform.tfstate aws/
 2) Create Kafa Namespace ?
 create-cluster
+
+
+############ Destroy cluster ############
+terraform destroy -var-file PROVDIER/terraform.tfvars aws/nano 
 
 
 ############ Add nodes to cluster ############
