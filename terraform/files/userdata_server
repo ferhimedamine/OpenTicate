@@ -62,9 +62,11 @@ CLUSTERID=`echo $CLUSTERRESPONSE | docker run --rm -i $jqimage -r .id`
 # Create kubectl config
 KUBECONFIG=$(docker run --rm --net=host $curlimage -s 'https://127.0.0.1/v3/clusters/'"$CLUSTERID"'?action=generateKubeconfig' -H 'content-type: application/json' -H 'Accept: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{}' --insecure)
 
+# Setup kubectl on the rancher server
 mkdir /home/ubuntu/.kube/
 KUBECONF=`echo $KUBECONFIG | docker run --rm -i $jqimage -r .config`
 echo "$KUBECONF"  > /home/ubuntu/.kube/config
+sed -i -e 's/[ \t]*//' /home/ubuntu/.kube/config
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 chown ubuntu /home/ubuntu/.kube/
@@ -84,6 +86,13 @@ sed '36s/^/    /' /home/ubuntu/.kube/config
 sed '37s/^/      /' /home/ubuntu/.kube/config
 sed '38s/^/      /' /home/ubuntu/.kube/config
 
+
+
+# Fast test environment Should we keep it?
+#wget https://dl.google.com/go/go1.11.1.linux-amd64.tar.gz
+#tar -C /usr/local -xzf go1.11.1.linux-amd64.tar.gz
+#export PATH=$PATH:/usr/local/go/bin
+# go get github.com/JulienTocci/OpenTicate
 
 # Generate registrationtoken
 docker run --rm --net=host $curlimage -s 'https://127.0.0.1/v3/clusterregistrationtoken' -H 'content-type: application/json' -H "Authorization: Bearer $APITOKEN" --data-binary '{"type":"clusterRegistrationToken","clusterId":"'$CLUSTERID'"}' --insecure
