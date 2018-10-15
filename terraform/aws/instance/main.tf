@@ -43,7 +43,7 @@ data "template_file" "userdata_agent" {
     cluster_name         = "${var.cluster_name}"
     docker_version_agent = "${var.docker_version_agent}"
     rancher_version      = "${var.rancher_version}"
-    server_address       = "${aws_instance.rancherserver.public_ip}"
+    server_address       = "${data.aws_instance.rancherserver.public_ip}"
   }
 }
 
@@ -122,10 +122,10 @@ resource "aws_instance" "instance" {
   instance_type          = "${var.new_node_type}"
   ami                    = "${data.aws_ami.ubuntu.id}"
   key_name               = "${var.ssh_key_name}"
-  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
-  subnet_id              = "${aws_subnet.sub_1.id}"
+  vpc_security_group_ids = ["${data.aws_security_group.rancher_sg_allowall.id}"]
+  subnet_id              = "${data.aws_subnet.sub_1.id}"
   user_data       = "${data.template_cloudinit_config.rancheragent-all-cloudinit.*.rendered[count.index]}"
-  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
+  vpc_security_group_ids = ["${data.aws_security_group.rancher_sg_allowall.id}"]
 
 
   root_block_device {
