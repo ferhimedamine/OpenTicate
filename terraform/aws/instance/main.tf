@@ -1,11 +1,22 @@
-#resource "aws_key_pair" "myKey" {
-#  key_name   = "openTicate"
-#  public_key = ""
-#}
-
-
-
 ##TODO configure the type of node: etcd, all ....
+
+provider "aws" {
+  access_key = "${var.aws_access_key}"
+  secret_key = "${var.aws_secret_key}"
+  region     = "${var.region}"
+}
+
+variable "aws_access_key" {
+  default     = "xxx"
+  description = "Amazon AWS Access Key"
+}
+
+variable "aws_secret_key" {
+  default     = "xxx"
+  description = "Amazon AWS Secret Key"
+}
+
+
 data "template_cloudinit_config" "rancheragent-all-cloudinit" {
   count = "${var.new_node_count}"
 
@@ -114,7 +125,11 @@ variable "new_node_count" {
   description = "Number of node to add"
 }
 
-
+#Example provisionning
+#resource "aws_key_pair" "myKey" {
+#  key_name   = "openTicate"
+#  public_key = ""
+#}
 
 resource "aws_instance" "instance" {
   count = "${var.new_node_count}"
