@@ -20,7 +20,7 @@ resource "aws_instance" "instance" {
   }
   
   tags {
-      Name = "${format("%s%02d", var.prefix, count.index + 1)}"
+      Name = "${var.prefix}-rancheragent-${count.index}-all"
       Group = "${var.prefix}"
   }
   
