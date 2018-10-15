@@ -3,13 +3,106 @@
 #  public_key = ""
 #}
 
+
+
+##TODO configure the type of node: etcd, all ....
+data "template_cloudinit_config" "rancheragent-all-cloudinit" {
+  count = "${var.new_node_count}"
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "hostname: ${var.prefix}-rancheragent-${count.index}-all\nmanage_etc_hosts: true"
+  }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = "${data.template_file.userdata_agent.rendered}"
+  }
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+data "template_file" "userdata_agent" {
+  template = "${file("../terraform/files/userdata_agent")}"
+
+  vars {
+    admin_password       = "${var.admin_password}"
+    cluster_name         = "${var.cluster_name}"
+    docker_version_agent = "${var.docker_version_agent}"
+    rancher_version      = "${var.rancher_version}"
+    server_address       = "${aws_instance.rancherserver.public_ip}"
+  }
+}
+
+
+variable "rancher_version" {
+  default     = "latest"
+  description = "Rancher Server Version"
+}
+
+variable "prefix" {
+  default     = "empty"
+  description = "Cluster Prefix - All resources created by Terraform have this prefix prepended to them"
+}
+
+variable "docker_version_agent" {
+  default     = "17.03"
+  description = "Docker Version to run on Kubernetes Nodes"
+}
+
+variable "admin_password" {
+  default     = "admin"
+  description = "Password to set for the admin account in Rancher"
+}
+
+variable "cluster_name" {
+  default     = "cluster1"
+  description = "Kubernetes Cluster Name"
+}
+
+variable "new_node_type" {
+  default     = "t2.medium"
+  description = "Amazon AWS Instance Type"
+}
+
+variable "new_node_disk" {
+  default     = "20"
+  description = "Disk size"
+}
+
+
+variable "ssh_key_name" {
+  default     = ""
+  description = "Amazon AWS Key Pair Name"
+}
+
+variable "new_node_count" {
+  default = "1"
+  description = "Number of node to add"
+}
+
+
+
 resource "aws_instance" "instance" {
   count = "${var.new_node_count}"
 
   instance_type          = "${var.new_node_type}"
   ami                    = "${data.aws_ami.ubuntu.id}"
   key_name               = "${var.ssh_key_name}"
-  vpc_security_group_ids = ["${var.security_group_id}"]
+  vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
   subnet_id              = "${aws_subnet.sub_1.id}"
   user_data       = "${data.template_cloudinit_config.rancheragent-all-cloudinit.*.rendered[count.index]}"
   vpc_security_group_ids = ["${aws_security_group.rancher_sg_allowall.id}"]
