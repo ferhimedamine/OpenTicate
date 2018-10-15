@@ -1,7 +1,7 @@
-resource "aws_key_pair" "myKey" {
-  key_name   = "openTicate"
-  public_key = ""
-}
+#resource "aws_key_pair" "myKey" {
+#  key_name   = "openTicate"
+#  public_key = ""
+#}
 
 resource "aws_instance" "instance" {
   count = "${var.new_node_count}"
