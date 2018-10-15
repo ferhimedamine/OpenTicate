@@ -16,6 +16,11 @@ variable "aws_secret_key" {
   description = "Amazon AWS Secret Key"
 }
 
+variable "region" {
+  default     = "us-east-1"
+  description = "Amazon AWS Region for deployment"
+}
+
 
 data "template_cloudinit_config" "rancheragent-all-cloudinit" {
   count = "${var.new_node_count}"
