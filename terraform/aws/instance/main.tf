@@ -47,6 +47,26 @@ data "template_file" "userdata_agent" {
   }
 }
 
+data "aws_instance" "rancherserver" {
+  filter {
+    name   = "tag:Name"
+    values = ["${var.prefix}-rancherserver"]
+  }
+}
+
+data "aws_security_group" "rancher_sg_allowall" {
+  filter {
+    name   = "tag:Name"
+    values = ["${var.prefix}-allowall"]
+  }
+}
+
+data "aws_subnet" "sub_1" {
+  filter {
+    name   = "tag:Name"
+    values = ["sub_1"]
+  }
+}
 
 variable "rancher_version" {
   default     = "latest"
