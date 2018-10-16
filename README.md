@@ -19,17 +19,20 @@ This implementation offers easy to ways to validate any types of contents, the a
 
 
 ## How do I get started?
-Install terraform on your machine
+Install terraform, kubectl and go on your machine
 
 Create a AWS account (will cost less than a few dollar months if you are not working on it 24/24 7/7)
-
+Create a ssh key pair in the the region in which you will deploy the cluster and call it openticate (download the private key)
 Link your account in the terraform/terraform.tfvars files (create it using https://raw.githubusercontent.com/rancher/quickstart/master/aws/terraform.tfvars.example)
+go to scripts/
+sh create-cluster (will output an ip necessary for the nex step)
+sh getKubeConfig.sh (will create the necessary configuration to connect to Kubernetes cluster from your local machine)
 
-go to terraform/
+You can now browse to the ip to access the UI of the Cluster and can interact with the Kubernetes cluster directly with your local installation of kubectl.
 
-terraform init
-
-terraform apply
+You can add node by modifying the counts* variable in terraform/terraform.tfvars and then
+cd scripts/
+sh add-node.sh
 
 
 You will have a Kubernetes cluster running in AWS, with Hyperledger Fabric running on top of it
