@@ -1,27 +1,73 @@
 ##TODO configure the type of node: etcd, all ....
 
+
+#### PROVIDER ####
 provider "aws" {
   access_key = "${var.aws_access_key}"
   secret_key = "${var.aws_secret_key}"
   region     = "${var.region}"
 }
 
+
+#### VARIABLES ####
 variable "aws_access_key" {
   default     = "xxx"
   description = "Amazon AWS Access Key"
 }
-
 variable "aws_secret_key" {
   default     = "xxx"
   description = "Amazon AWS Secret Key"
 }
-
 variable "region" {
   default     = "us-east-1"
   description = "Amazon AWS Region for deployment"
 }
+variable "rancher_version" {
+  default     = "latest"
+  description = "Rancher Server Version"
+}
+
+variable "prefix" {
+  default     = "empty"
+  description = "Cluster Prefix - All resources created by Terraform have this prefix prepended to them"
+}
+
+variable "docker_version_agent" {
+  default     = "17.03"
+  description = "Docker Version to run on Kubernetes Nodes"
+}
+
+variable "admin_password" {
+  default     = "admin"
+  description = "Password to set for the admin account in Rancher"
+}
+
+variable "cluster_name" {
+  default     = "cluster1"
+  description = "Kubernetes Cluster Name"
+}
+
+variable "new_node_type" {
+  default     = "t2.medium"
+  description = "Amazon AWS Instance Type"
+}
+
+variable "new_node_disk" {
+  default     = "20"
+  description = "Disk size"
+}
+variable "ssh_key_name" {
+  default     = ""
+  description = "Amazon AWS Key Pair Name"
+}
+variable "new_node_count" {
+  default = "1"
+  description = "Number of node to add"
+}
 
 
+
+#### DATASOURCES ####
 data "template_cloudinit_config" "rancheragent-all-cloudinit" {
   count = "${var.new_node_count}"
 
@@ -84,58 +130,7 @@ data "aws_subnet" "sub_1" {
   }
 }
 
-variable "rancher_version" {
-  default     = "latest"
-  description = "Rancher Server Version"
-}
-
-variable "prefix" {
-  default     = "empty"
-  description = "Cluster Prefix - All resources created by Terraform have this prefix prepended to them"
-}
-
-variable "docker_version_agent" {
-  default     = "17.03"
-  description = "Docker Version to run on Kubernetes Nodes"
-}
-
-variable "admin_password" {
-  default     = "admin"
-  description = "Password to set for the admin account in Rancher"
-}
-
-variable "cluster_name" {
-  default     = "cluster1"
-  description = "Kubernetes Cluster Name"
-}
-
-variable "new_node_type" {
-  default     = "t2.medium"
-  description = "Amazon AWS Instance Type"
-}
-
-variable "new_node_disk" {
-  default     = "20"
-  description = "Disk size"
-}
-
-
-variable "ssh_key_name" {
-  default     = ""
-  description = "Amazon AWS Key Pair Name"
-}
-
-variable "new_node_count" {
-  default = "1"
-  description = "Number of node to add"
-}
-
-#Example provisionning
-#resource "aws_key_pair" "myKey" {
-#  key_name   = "openTicate"
-#  public_key = ""
-#}
-
+#### INSTANCES ####
 resource "aws_instance" "instance" {
   count = "${var.new_node_count}"
 

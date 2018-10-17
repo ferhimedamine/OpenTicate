@@ -31,7 +31,9 @@ Link your account in the terraform/terraform.tfvars files (create it using https
 new_node_count = "X"
 new_node_disk = "20"
 new_node_type = "t2.medium"
-
+autoscaling-etcd-type = "t2.medium"
+autoscaling-worker-type = "t2.medium"
+autoscaling-controlplane-type = "t2.medium"
 
 go to scripts/
 
