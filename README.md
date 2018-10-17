@@ -25,7 +25,13 @@ Create a AWS account (will cost less than a few dollar months if you are not wor
 
 Create a ssh key pair in the the region in which you will deploy the cluster and call it openticate (download the private key)
 
-Link your account in the terraform/terraform.tfvars files (create it using https://raw.githubusercontent.com/rancher/quickstart/master/aws/terraform.tfvars.example)
+Link your account in the terraform/terraform.tfvars files (create it using https://raw.githubusercontent.com/rancher/quickstart/master/aws/terraform.tfvars.example ) and add at the end of the file:
+
+\# AWS
+new_node_count = "X"
+new_node_disk = "20"
+new_node_type = "t2.medium"
+
 
 go to scripts/
 

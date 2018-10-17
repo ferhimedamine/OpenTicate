@@ -148,6 +148,10 @@ resource "aws_security_group" "rancher_sg_allowall" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags {
+   Name = "${var.prefix}-allowall"
+  }
 }
 
 data "template_cloudinit_config" "rancherserver-cloudinit" {
