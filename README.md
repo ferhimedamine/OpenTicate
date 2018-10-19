@@ -4,6 +4,13 @@ Powering the future of content validation using HyperLedger Fabric
 ## What does this project do?
 Offer a command line, which permits you to launch a Hyperledger Fabric Cluster running on top of Kubernetes. The command line will then permits you to interact with this cluster, and offers an easy way to define a content validation system based on it.
 
+The starting point of this project is a running Hyperledger Fabric blockchain on Kubernetes. For that we uses usefull articles and repositories:
+https://github.com/hyperledger/fabric-samples/tree/release/first-network
+https://github.com/hainingzhang/articles
+
+The project consists in giving a command line specialized for content validation using the Hyperledger Fabric blockchain on Kubernetes
+
+
 
 ## Why is this project useful?
 HyperLedger vs Legacy systems:
