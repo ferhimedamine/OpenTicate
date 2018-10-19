@@ -1,0 +1,254 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+---
+## More information https://github.com/hainingzhang/articles/blob/master/fabric_on_kubernetes/Fabric-on-K8S/setupCluster/configtx.yaml
+
+################################################################################
+#
+#   PROFILES
+#
+#   Different configuration profiles may be encoded here to be specified as
+#   parameters to the configtxgen tool. The profiles which specify consortiums
+#   are to be used for generating the orderer genesis block. With the correct
+#   consortium members defined in the orderer genesis block, channel creation
+#   requests may be generated with only the org member names and a consortium
+#   name.
+#
+################################################################################
+Profiles:
+    # More profile should be done
+    # Simple profile
+    SampleSingleMSPSolo:
+        <<: *Channel1
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *OrdererOrg
+    # Production ready profile
+    SampleSingleMSPKafka:
+        <<: *Channel1
+        Orderer:
+            <<: *OrdererDefaults
+            OrdererType: kafka
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *OrdererOrg
+    # Testing profile
+    SampleInsecureSolo:
+        <<: *Channel1
+        Orderer:
+            <<: *OrdererDefaults
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+
+    # Testing profile + Kafka
+    SampleInsecureKafka:
+        <<: *Channel1
+        Orderer:
+            OrdererType: kafka
+            <<: *OrdererDefaults
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+
+    # Dev profile
+    SampleDevModeSolo:
+        <<: *Channel1
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - <<: *OrdererOrg
+                  Policies:
+                      <<: *OrdereRorgPolicies
+                      Admins:
+                          Type: Signature
+                          Rule: "OR('OrdererOrg.member')"
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - <<: *OrdererOrg
+                  Policies:
+                      <<: *OrdereRorgPolicies
+                      Admins:
+                          Type: Signature
+                          Rule: "OR('OrdererOrg.member')"
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - <<: *OrdererOrg
+                      Policies:
+                          <<: *OrdereRorgPolicies
+                          Admins:
+                              Type: Signature
+                              Rule: "OR('OrdererOrg.member')"
+
+################################################################################
+#
+#   ORGANIZATIONS
+#
+#   This section defines the organizational identities that can be referenced
+#   in the configuration profiles.
+#
+################################################################################
+Organizations:
+    - &OrdererOrg
+        Name: Orgorderer1MSP
+        ID: Orgorderer1MSP
+        MSPDir: crypto-config/ordererOrganizations/orgorderer1/msp
+        Policies: &OrdererOrg
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererOrg.member')"
+                # If your MSP is configured with the new NodeOUs, you might
+                # want to use a more specific rule like the following:
+                # Rule: "OR('OrdereRorg.admin', 'OrdereRorg.peer', 'OrdereRorg.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererOrg.member')"
+                # If your MSP is configured with the new NodeOUs, you might
+                # want to use a more specific rule like the following:
+                # Rule: "OR('OrdereRorg.admin', 'OrdereRorg.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererOrg.admin')"
+        AnchorPeers:
+            - Host: peer0.Orgorderer1MSP
+              Port: 7051
+
+    - &Org1
+        Name: Org1MSP
+        ID: Org1MSP
+        MSPDir: crypto-config/peerOrganizations/org1/msp
+        AnchorPeers:
+            - Host: peer0.Org1MSP
+              Port: 7051
+
+    - &Org2
+        Name: Org2MSP
+        ID: Org2MSP
+        MSPDir: crypto-config/peerOrganizations/org2/msp
+        AnchorPeers:
+            - Host: peer0.Org2MSP
+              Port: 7051
+
+
+################################################################################
+#
+#   ORDERER
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters.
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    OrdererType: solo
+    Addresses:
+        - orderer0.orgorderer1:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 50 MB
+        PreferredMaxBytes: 512 KB
+    MaxChannels: 0
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+        # See what can be done with etcdraft
+    Organizations:
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+    Capabilities:
+        <<: *OrdererCapabilities
+
+################################################################################
+#
+#   CAPABILITIES
+#
+################################################################################
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V1_3: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_3: true
+        V1_2: false
+        V1_1: false
+
+################################################################################
+#
+#   APPLICATION
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for application-related parameters.
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # TODO SETUP ACL FOR THE CONTENT VALIDATION SYSTEM FUNCTIONS
+    Organizations:
+    Policies: &ApplicationDefaultPolicies
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+
+################################################################################
+#
+#   CHANNEL
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for channel related parameters.
+#
+################################################################################
+Channel: &Channel1
+    Policies:
+        # Who may invoke the 'Deliver' API
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        # Who may invoke the 'Broadcast' API
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        # By default, who may modify elements at this config level
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
