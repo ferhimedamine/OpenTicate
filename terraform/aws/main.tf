@@ -293,7 +293,7 @@ resource "aws_instance" "rancheragent-worker" {
 }
 
 data "template_file" "userdata_server" {
-  template = "${file("../terraform/files/userdata_server")}"
+  template = "${file("../provisioning/KubernetesCluster/userdata_server")}"
 
   vars {
     admin_password        = "${var.admin_password}"
@@ -305,7 +305,7 @@ data "template_file" "userdata_server" {
 
 
 data "template_file" "userdata_agent" {
-  template = "${file("../terraform/files/userdata_agent")}"
+  template = "${file("../provisioning/KubernetesCluster/userdata_agent")}"
 
   vars {
     admin_password       = "${var.admin_password}"

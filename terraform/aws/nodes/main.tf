@@ -98,7 +98,7 @@ data "aws_ami" "ubuntu" {
 }
 
 data "template_file" "userdata_agent" {
-  template = "${file("../terraform/files/userdata_agent")}"
+  template = "${file("../provisioning/KubernetesCluster/userdata_agent")}"
 
   vars {
     admin_password       = "${var.admin_password}"

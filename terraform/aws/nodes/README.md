@@ -1,0 +1,1 @@
+The terraform files here should be used to add new nodes to existing cluster.
