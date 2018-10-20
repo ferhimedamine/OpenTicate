@@ -123,7 +123,7 @@ resource "aws_efs_file_system" "crypto_fs" {
 resource "aws_efs_mount_target" "crypto_fs_mount" {
   file_system_id = "${aws_efs_file_system.crypto_fs.id}"
   subnet_id      = "${aws_subnet.sub_1.id}"
-  security_groups = "${aws_security_group.rancher_sg_allowall.id}"
+  security_groups = ["${aws_security_group.rancher_sg_allowall.id}"]
 }
 
 resource "aws_internet_gateway" "default" {
