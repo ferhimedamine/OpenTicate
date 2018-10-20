@@ -57,8 +57,63 @@ Organizations:
               Port: 7051
 
 
+################################################################################
+#
+#   CAPABILITIES
+#
+################################################################################
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V1_3: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_3: true
+        V1_2: false
+        V1_1: false
 
 
+################################################################################
+#
+#   ORDERER
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters.
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    OrdererType: solo
+    Addresses:
+        - orderer0.orgorderer1:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 50 MB
+        PreferredMaxBytes: 512 KB
+    MaxChannels: 0
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+        # See what can be done with etcdraft
+    Organizations:
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+    Capabilities:
+        <<: *OrdererCapabilities
 
 ################################################################################
 #
@@ -84,6 +139,34 @@ Channel: &Channel1
             Rule: "MAJORITY Admins"
     Capabilities:
         <<: *ChannelCapabilities
+
+
+
+################################################################################
+#
+#   APPLICATION
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for application-related parameters.
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # TODO SETUP ACL FOR THE CONTENT VALIDATION SYSTEM FUNCTIONS
+    Organizations:
+    Policies: &ApplicationDefaultPolicies
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
 
 
 ################################################################################
@@ -172,90 +255,3 @@ Profiles:
                           Admins:
                               Type: Signature
                               Rule: "OR('OrdererOrg.member')"
-
-
-
-
-################################################################################
-#
-#   ORDERER
-#
-#   This section defines the values to encode into a config transaction or
-#   genesis block for orderer related parameters.
-#
-################################################################################
-Orderer: &OrdererDefaults
-
-    OrdererType: solo
-    Addresses:
-        - orderer0.orgorderer1:7050
-    BatchTimeout: 2s
-    BatchSize:
-        MaxMessageCount: 10
-        AbsoluteMaxBytes: 50 MB
-        PreferredMaxBytes: 512 KB
-    MaxChannels: 0
-    Kafka:
-        Brokers:
-            - 127.0.0.1:9092
-        # See what can be done with etcdraft
-    Organizations:
-
-    Policies:
-        Readers:
-            Type: ImplicitMeta
-            Rule: "ANY Readers"
-        Writers:
-            Type: ImplicitMeta
-            Rule: "ANY Writers"
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
-        BlockValidation:
-            Type: ImplicitMeta
-            Rule: "ANY Writers"
-    Capabilities:
-        <<: *OrdererCapabilities
-
-################################################################################
-#
-#   CAPABILITIES
-#
-################################################################################
-
-Capabilities:
-    Channel: &ChannelCapabilities
-        V1_3: true
-    Orderer: &OrdererCapabilities
-        V1_1: true
-    Application: &ApplicationCapabilities
-        V1_3: true
-        V1_2: false
-        V1_1: false
-
-################################################################################
-#
-#   APPLICATION
-#
-#   This section defines the values to encode into a config transaction or
-#   genesis block for application-related parameters.
-#
-################################################################################
-Application: &ApplicationDefaults
-
-    # TODO SETUP ACL FOR THE CONTENT VALIDATION SYSTEM FUNCTIONS
-    Organizations:
-    Policies: &ApplicationDefaultPolicies
-        Readers:
-            Type: ImplicitMeta
-            Rule: "ANY Readers"
-        Writers:
-            Type: ImplicitMeta
-            Rule: "ANY Writers"
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
-    Capabilities:
-        <<: *ApplicationCapabilities
-
-
