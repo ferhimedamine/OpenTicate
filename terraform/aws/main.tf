@@ -109,6 +109,17 @@ resource "aws_vpc" "OpenTicateVpc" {
     enable_dns_hostnames = true
 }
 
+resource "aws_efs_file_system" "crypto_fs" {
+  tags {
+    Name = "crypto_fs"
+  }
+}
+
+resource "aws_efs_mount_target" "crypto_fs_mount" {
+  file_system_id = "${aws_efs_file_system.crypto_fs.id}"
+  subnet_id      = "${aws_subnet.sub_1.id}"
+}
+
 resource "aws_internet_gateway" "default" {
    vpc_id = "${aws_vpc.OpenTicateVpc.id}"
 }
