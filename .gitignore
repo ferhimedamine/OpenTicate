@@ -10,3 +10,4 @@ override.tf.json
 *.pem
 scripts/data
 crypto-config
+channel-artifacts
