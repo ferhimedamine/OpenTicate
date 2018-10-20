@@ -20,3 +20,7 @@ sleep 40
 echo "## Copying all necessary files to the EFS inside AWS Infrastructure via one kubernetes node"
 scp -o StrictHostKeyChecking=no -r -i ~/OpenTicate.pem ../provisioning/fabric/crypto-config  ubuntu@$(cat ./data/rancheragent_all):/opt/share
 scp -o StrictHostKeyChecking=no -r -i ~/OpenTicate.pem ../provisioning/fabric/channel-artifacts  ubuntu@$(cat ./data/rancheragent_all):/opt/share
+
+
+echo "Creating Kubernetes deployments, services etc..."
+python3.6 ../provisioning/fabric/transform/run.py
