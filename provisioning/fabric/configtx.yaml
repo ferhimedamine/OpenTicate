@@ -76,6 +76,33 @@ Capabilities:
 
 ################################################################################
 #
+#   APPLICATION
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for application-related parameters.
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # TODO SETUP ACL FOR THE CONTENT VALIDATION SYSTEM FUNCTIONS
+    Organizations:
+    Policies: &ApplicationDefaultPolicies
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+
+
+################################################################################
+#
 #   ORDERER
 #
 #   This section defines the values to encode into a config transaction or
@@ -140,32 +167,6 @@ Channel: &Channel1
     Capabilities:
         <<: *ChannelCapabilities
 
-
-
-################################################################################
-#
-#   APPLICATION
-#
-#   This section defines the values to encode into a config transaction or
-#   genesis block for application-related parameters.
-#
-################################################################################
-Application: &ApplicationDefaults
-
-    # TODO SETUP ACL FOR THE CONTENT VALIDATION SYSTEM FUNCTIONS
-    Organizations:
-    Policies: &ApplicationDefaultPolicies
-        Readers:
-            Type: ImplicitMeta
-            Rule: "ANY Readers"
-        Writers:
-            Type: ImplicitMeta
-            Rule: "ANY Writers"
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
-    Capabilities:
-        <<: *ApplicationCapabilities
 
 
 
