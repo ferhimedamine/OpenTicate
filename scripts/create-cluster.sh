@@ -4,10 +4,9 @@ terraform output --state ../terraform/terraform.tfstate crypto_efs > ./data/efs_
 terraform output --state ../terraform/terraform.tfstate rancher-url > ./data/rancher_server_ip
 terraform output --state ../terraform/terraform.tfstate rancheragent_all > ./data/rancheragent_all
 
-pwd
 echo "## Replacing templates NAS dns with the EFS one"
 sed -i "s/10.10.10.10/$(cat ./data/efs_dns)/g" ../provisioning/fabric/templates/fabric_1_0_template_pod_cli.yaml
-sed -i "s/10.10.10.10/$(cat ./data/efs_dns)/g" ../provisioning/fabric/templages/fabric_1_0_template_pod_namespace.yaml
+sed -i "s/10.10.10.10/$(cat ./data/efs_dns)/g" ../provisioning/fabric/templates/fabric_1_0_template_pod_namespace.yaml
 
 echo "## Waiting for Kubernetes cluster to be up, 20 sec"
 sleep 20
