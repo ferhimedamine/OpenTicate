@@ -40,6 +40,10 @@ Install Hyperledger fabric Bins on your system:
 
 *sudo cp ./fabric-sample/bin/\* /usr/local/bin *
 
+Install addional tool
+
+*sudo apt install nfs-common*
+
 go to scripts/
 
 sh create-cluster (will output an ip necessary for the nex step)

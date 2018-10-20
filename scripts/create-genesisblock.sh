@@ -1,1 +1,3 @@
-sudo /bin/bash ../provisioning/fabric/createFabric.sh ~/OpenTicate/provisioning/fabric
+alias cgenb="cd ../provisioning/fabric/; sudo /bin/bash createFabric.sh"
+cgenb
+unalias cgenb
