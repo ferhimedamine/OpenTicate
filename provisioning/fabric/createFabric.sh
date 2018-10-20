@@ -34,7 +34,7 @@ function generateChannelArtifacts() {
 
 	cp ./channel-artifacts/genesis.block ./crypto-config/ordererOrganizations/*
 
-	cp -r ./crypto-config /opt/share/ && cp -r ./channel-artifacts /opt/share/
+	# cp -r ./crypto-config /opt/share/ && cp -r ./channel-artifacts /opt/share/
 	#/opt/share mouts the remote /opt/share from nfs server
 }
 
