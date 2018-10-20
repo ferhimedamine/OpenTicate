@@ -341,3 +341,7 @@ output "rancher-url" {
 output "crypto_efs" {
   value = ["${aws_efs_file_system.crypto_fs.dns_name}"]
 }
+
+output "rancheragent_all" {
+  value = ["${aws_instance.rancheragent-all.*.public_ip}"]
+}
