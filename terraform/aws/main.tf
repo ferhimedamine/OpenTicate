@@ -337,3 +337,7 @@ data "template_file" "userdata_agent" {
 output "rancher-url" {
   value = ["https://${aws_instance.rancherserver.public_ip}"]
 }
+
+output "crypto_efs" {
+  value = ["${aws_efs_file_system.crypto_fs.dns_name}"]
+}

@@ -9,7 +9,7 @@ spec:
        - ReadWriteMany
     nfs: 
       path: /opt/share/channel-artifacts
-      server: 10.112.122.9 #change to your nfs server ip here
+      server: 10.10.10.10 
 ---
 
 apiVersion: v1

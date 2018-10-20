@@ -26,7 +26,7 @@ This implementation offers easy to ways to validate any types of contents, the a
 
 
 ## How do I get started?
-Install terraform, kubectl and go on your machine
+Install terraform, kubectl, jq and go on your machine
 
 Create a AWS account (will cost less than a few dollar months if you are not working on it 24/24 7/7)
 

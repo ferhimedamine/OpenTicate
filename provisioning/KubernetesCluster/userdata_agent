@@ -2,6 +2,8 @@
 export curlimage=appropriate/curl
 export jqimage=stedolan/jq
 export rancher_server_ip='${server_address}'
+export efs_dns='${efs}'
+
 
 if [ `command -v curl` ]; then
   curl -sL https://releases.rancher.com/install-docker/${docker_version_agent}.sh | sh
@@ -99,8 +101,10 @@ done
 
 mkdir /opt/share
 sudo apt-get --yes install nfs-common
+sleep 5
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns}:/ /opt/share
+chown ubuntu /opt/share
 
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport "${efs}:/" /opt/share
 # Combine command and flags
 COMPLETECMD="$AGENTCMD --address awspublic --internal-address awslocal --$ROLEFLAG"
 
