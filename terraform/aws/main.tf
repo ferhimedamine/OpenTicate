@@ -109,6 +109,11 @@ resource "aws_vpc" "OpenTicateVpc" {
     enable_dns_hostnames = true
 }
 
+######EFS CONFIGURATION #######
+#  setup a proper installation
+# 
+#  example https://github.com/manheim/tf_efs_mount
+##############################
 resource "aws_efs_file_system" "crypto_fs" {
   tags {
     Name = "crypto_fs"
@@ -323,6 +328,7 @@ data "template_file" "userdata_agent" {
     cluster_name         = "${var.cluster_name}"
     docker_version_agent = "${var.docker_version_agent}"
     rancher_version      = "${var.rancher_version}"
+    efs                  = "${aws_efs_file_system.crypto_fs.dns_name}"
     server_address       = "${aws_instance.rancherserver.public_ip}"
   }
 }
