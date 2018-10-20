@@ -3,7 +3,7 @@
 CHANNEL_NAME=$1
 : ${CHANNEL_NAME:="mychannel"}
 
-export TOOLS=$PWD/../bin
+export TOOLS=/usr/local/bin
 export CONFIG_PATH=$PWD
 export FABRIC_CFG_PATH=$PWD
 
@@ -39,7 +39,7 @@ function generateChannelArtifacts() {
 }
 
 function generateK8sYaml (){
-	python3.5 transform/generate.py
+	python3.6 transform/generate.py
 }
 
 function clean () {

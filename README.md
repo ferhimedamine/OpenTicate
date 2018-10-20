@@ -26,13 +26,19 @@ This implementation offers easy to ways to validate any types of contents, the a
 
 
 ## How do I get started?
-Install terraform, kubectl, jq and go on your machine
+Install terraform, python 3.6, kubectl, jq and go on your machine
 
 Create a AWS account (will cost less than a few dollar months if you are not working on it 24/24 7/7)
 
 Create a ssh key pair in the the region in which you will deploy the cluster and call it openticate (download the private key)
 
 Link your account in the terraform/terraform.tfvars files (create it using the example-configs/ExampleTerraformtfvars ) and add at the end of the file:
+
+Install Hyperledger fabric Bins on your system:
+
+*curl -sSL http://bit.ly/2ysbOFE | bash -s 1.3.0*
+
+*sudo cp ./fabric-sample/bin/\* /usr/local/bin *
 
 go to scripts/
 
